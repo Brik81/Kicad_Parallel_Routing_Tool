@@ -1,0 +1,22 @@
+{
+    "$schema": "https://go.kicad.org/api/schemas/v1",
+    "identifier": "com.github.brik81.parallel-routing-tool",
+    "name": "Parallel Routing Tool",
+    "description": "Route a group of selected nets as a compact parallel bundle on one copper layer",
+    "runtime": {
+        "type": "python",
+        "min_version": "3.9"
+    },
+    "actions": [
+        {
+            "identifier": "run",
+            "name": "Parallel Routing Tool",
+            "description": "Route selected pads as a parallel bundle",
+            "show-button": true,
+            "scopes": ["pcb"],
+            "entrypoint": "entrypoint.py",
+            "icons-light": ["icon.png", "icon@2x.png"],
+            "icons-dark": ["icon.png", "icon@2x.png"]
+        }
+    ]
+}
