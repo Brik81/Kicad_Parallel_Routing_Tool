@@ -1,66 +1,66 @@
-# 〰️ Parallel Routing Tool per KiCad 10
+# 〰️ Parallel Routing Tool for KiCad 10
 
-> Tracci **tu** una pista: il plugin instrada le altre del fascio **parallele e vicine**, solo a 0/45/90°, deviando dove serve per aggirare gli ostacoli.
+> **You** route one track: the plugin routes the rest of the bus **parallel and close together**, 0/45/90° only, detouring where needed to get around obstacles.
 
 ![KiCad](https://img.shields.io/badge/KiCad-10.0-314cb0)
 ![API](https://img.shields.io/badge/API-IPC%20(kicad--python)-0a7)
-![Versione](https://img.shields.io/badge/versione-V0%20provvisoria-red)
+![Version](https://img.shields.io/badge/version-V0%20provisional-red)
 
-> ⚠️ **V0 provvisoria, non definitiva.** Il tool è ancora in sviluppo: funziona sui casi provati, ma i risultati non sono ancora al livello finale e comportamento, interfaccia e regole possono cambiare. Controlla sempre il risultato ed esegui il DRC di KiCad.
+> ⚠️ **V0: provisional, not final.** The tool is still under development. It works on the cases tested so far, but results are not yet at their final quality, and behaviour, interface and rules may change. Always check the result and run KiCad's DRC.
 
-**Non è un autorouter.** Il percorso lo decidi tu, tracciando a mano una pista guida con il router di KiCad. Ogni altra net riceve una corsia parallela alla guida e viene instradata lungo quella corsia, uscendone solo per aggirare gli ostacoli. Tu decidi se applicare il risultato e poi lanci il DRC di KiCad.
+**This is not an autorouter.** You decide the path by routing one guide track by hand with KiCad's router. Every other net gets a lane parallel to the guide and is routed along it, leaving the lane only to get around obstacles. You decide whether to apply the result, then run KiCad's DRC.
 
 ---
 
-## ✨ Cosa fa
+## ✨ What it does
 
 | | |
 |---|---|
-| ✋ **Percorso manuale** | Tracci una sola pista (la guida) con il router di KiCad; le altre la seguono. |
-| 📏 **Fascio parallelo** | Ogni pista è una copia della guida spostata della distanza del suo pad: il fascio mantiene la spaziatura dei pad e fa le stesse svolte della guida. |
-| 🧭 **Flessibile** | Se un ostacolo blocca una corsia, solo quella pista devia (e le vicine la seguono), poi rientra. |
-| 📐 **Solo 0/45/90°** | Tratti orizzontali, verticali o a 45°: nessun segmento storto. |
-| 🎯 **Selezione esplicita** | Esattamente 2 pad per net, niente connessioni indovinate. |
-| 🛡️ **Sicuro** | Un solo layer, niente via, nessuna pista esistente toccata, nessuna modifica senza conferma o se la clearance non è rispettata. Un'unica operazione annullabile con `Ctrl+Z`. |
+| ✋ **Manual path** | You route a single track (the guide) with KiCad's router; the others follow it. |
+| 📏 **Parallel bus** | Each track is a copy of the guide, offset by its pad's distance from the guide: near the pads the bus keeps the pad pitch and makes the same bends as the guide. On long runs it tightens up. |
+| 🧭 **Flexible** | If an obstacle blocks a lane, only that track detours (its neighbours follow), then it returns to its lane. |
+| 📐 **0/45/90° only** | Horizontal, vertical or 45° segments: no skewed segments. |
+| 🎯 **Explicit selection** | Exactly 2 pads per net, no guessed connections. |
+| 🛡️ **Safe** | One layer, no vias, existing tracks are never touched, nothing changes without confirmation or if clearance is not met. A single operation, undoable with `Ctrl+Z`. |
 
-## 🚦 Stato del progetto
+## 🚦 Project status
 
-| Tappa | Contenuto | Stato |
+| Stage | Content | Status |
 |---|---|---|
-| 1 | Verifica ambiente e API KiCad 10 | ✅ fatta |
-| 2 | Plugin minimo installabile | ✅ caricato in KiCad 10.0.7 (Windows) |
-| 3 | Lettura board e selezione | ✅ verificata in KiCad 10.0.7 |
-| 4 | Proposta di routing (modalità pista guida) | 🟡 V0: provata in KiCad 10.0.7, risultati da migliorare |
-| 5 | Applicazione e controllo | ✅ Applica / Mantieni / Rimuovi provati in KiCad 10.0.7 |
+| 1 | Check KiCad 10 environment and API | ✅ done |
+| 2 | Minimal installable plugin | ✅ loaded in KiCad 10.0.7 (Windows) |
+| 3 | Board reading and selection | ✅ verified in KiCad 10.0.7 |
+| 4 | Routing proposal (guide-track mode) | 🟡 V0: tested in KiCad 10.0.7, results need improvement |
+| 5 | Apply and control | ✅ Apply / Keep / Remove tested in KiCad 10.0.7 |
 
-> ℹ️ Verificato nel PCB Editor reale (KiCad 10.0.7, Windows 11): caricamento del plugin, lettura della selezione, creazione e rimozione delle piste, modalità pista guida. Lo stringimento del fascio sui tratti lunghi è nuovo e non ancora provato in KiCad.
+> ℹ️ Verified in the real PCB Editor (KiCad 10.0.7, Windows 11): plugin loading, selection reading, track creation and removal, guide-track mode. Tightening the bus on long runs is new and **not yet tested** in KiCad.
 
-## 📦 Requisiti
+## 📦 Requirements
 
-- **KiCad 10.0** (verificato l'ambiente con 10.0.7, Windows 11)
-- **API IPC abilitata**: `Preferenze → Plugin → Abilita server API`
-- Connessione internet al primo avvio (KiCad installa `kicad-python` nell'ambiente virtuale del plugin)
+- **KiCad 10.0** (environment verified with 10.0.7, Windows 11)
+- **IPC API enabled**: `Preferences → Plugins → Enable KiCad API`
+- Internet connection on first start (KiCad installs `kicad-python` into the plugin's virtual environment)
 
-Il plugin usa la nuova **IPC API** (`kicad-python` / `kipy`), non la vecchia interfaccia SWIG `pcbnew`, che in KiCad 10 è deprecata.
+The plugin uses the new **IPC API** (`kicad-python` / `kipy`), not the legacy SWIG `pcbnew` interface, which is deprecated in KiCad 10.
 
-## 🔧 Installazione
+## 🔧 Installation
 
-KiCad 10 carica i plugin IPC da una sottocartella di:
+KiCad 10 loads IPC plugins from a subfolder of:
 
-| Sistema | Cartella plugin |
+| System | Plugin folder |
 |---|---|
 | Windows | `%USERPROFILE%\Documents\KiCad\10.0\plugins\` |
 | macOS | `~/Documents/KiCad/10.0/plugins/` |
 | Linux | `~/.local/share/KiCad/10.0/plugins/` |
 
-### Opzione A — copia
+### Option A: copy
 
-1. Scarica o clona questo repository.
-2. Copia la cartella `plugin/` dentro la cartella plugin e rinominala `parallel_routing_tool`.
-3. Riavvia KiCad e apri il PCB Editor.
-4. Attendi qualche secondo: KiCad crea l'ambiente Python del plugin in background. Poi compare il pulsante **Parallel Routing Tool** nella barra strumenti.
+1. Download or clone this repository.
+2. Copy the `plugin/` folder into the plugin folder and rename it `parallel_routing_tool`.
+3. Restart KiCad and open the PCB Editor.
+4. Wait a few seconds while KiCad creates the plugin's Python environment in the background. The **Parallel Routing Tool** button then appears in the toolbar.
 
-### Opzione B — link per sviluppo (le modifiche sono subito attive)
+### Option B: link for development (changes take effect immediately)
 
 **Windows (PowerShell):**
 
@@ -74,74 +74,77 @@ New-Item -ItemType Junction -Path "$env:USERPROFILE\Documents\KiCad\10.0\plugins
 ln -s "$PWD/plugin" ~/Documents/KiCad/10.0/plugins/parallel_routing_tool
 ```
 
-### Se il pulsante non compare
+### If the button does not appear
 
-- Verifica che il server API sia abilitato (vedi *Requisiti*).
-- `Preferenze → Plugin`: controlla il percorso dell'interprete Python, poi tasto destro sull'azione → **Ricrea ambiente plugin**.
-- L'ambiente virtuale si trova in `%LOCALAPPDATA%\KiCad\10.0\python-environments\<id-plugin>` (Windows).
+- Check that the API server is enabled (see *Requirements*).
+- In `Preferences → Plugins`, check the Python interpreter path, then right-click the action → **Recreate Plugin Environment**.
+- On Windows the virtual environment is in `%LOCALAPPDATA%\KiCad\10.0\python-environments\<plugin-id>`.
 
-## 🗑️ Disinstallazione
+## 🗑️ Uninstall
 
-1. Chiudi KiCad.
-2. Elimina la cartella `parallel_routing_tool` dalla cartella plugin (con il link dell'opzione B viene rimosso solo il link, non il repository).
-3. Opzionale: elimina il relativo ambiente in `python-environments`.
+1. Close KiCad.
+2. Delete the `parallel_routing_tool` folder from the plugin folder. With option B's link, only the link is removed, not the repository.
+3. Optional: delete its environment in `python-environments`.
 
-## 🧪 Uso
+## 🧪 Usage
 
-1. Con il router di KiCad (`X`) traccia **a mano una sola pista**, la *guida*, tra due pad del gruppo. Usa solo tratti orizzontali, verticali o a 45°.
-2. Seleziona **tutti i pad** del fascio, compresi i due della guida. **Regola:** esattamente 2 pad per net.
-3. Avvia **Parallel Routing Tool**. Le altre piste vengono instradate:
-   - lungo corsie parallele alla guida, dalla parte in cui si trovano i loro pad;
-   - deviando attorno agli ostacoli quando serve, poi rientrando in corsia;
-   - solo con tratti a 0/45/90°, con la stessa larghezza e sullo stesso layer della guida.
-4. Finché non premi **Applica** la board non cambia. **Applica** crea tutto in un'unica operazione (un solo `Ctrl+Z`). Poi scegli **Mantieni** oppure **Rimuovi**, che elimina solo i segmenti appena creati.
-5. Riempi di nuovo le zone (`B`) ed **esegui sempre il DRC di KiCad**.
+1. With KiCad's router (`X`), route **one track by hand**, the *guide*, between two pads of the group. Use only horizontal, vertical or 45° segments.
+2. Select **all the pads** of the bus, including the guide's two. **Rule:** exactly 2 pads per net.
+3. Run **Parallel Routing Tool**. The other tracks are routed:
+   - along lanes parallel to the guide, on the side where their pads are;
+   - around obstacles when needed, then back into their lane;
+   - with 0/45/90° segments only, using the guide's width and layer.
+4. Until you press **Applica** (Apply), the board does not change. Apply creates everything in a single operation (one `Ctrl+Z`). Then choose **Mantieni** (Keep) or **Rimuovi** (Remove); Remove deletes only the segments just created.
+5. Refill zones (`B`) and **always run KiCad's DRC**.
 
-Se la proposta viene rifiutata (pad in ordine incrociato, nessun percorso libero, clearance violata), sposta la guida e riprova.
+If the proposal is rejected (crossed pad order, no free path, clearance violated), move the guide and try again.
 
-> L'API documenta che le modifiche dentro un commit non sono visibili finché il commit non viene confermato. Per questo l'"anteprima" è: applica, guarda, mantieni o rimuovi.
+> The plugin's dialogs are currently in Italian.
 
-## ⚙️ Come funziona
+> The API documents that changes inside a commit are not visible until the commit is pushed. That is why the "preview" is: apply, look, then keep or remove.
+
+## ⚙️ How it works
 
 ```
 plugin/
-  entrypoint.py   flusso e finestre (wx)
-  board_io.py     KiCad: selezione, pista guida, regole, ostacoli, applica/rimuovi
-  selection.py    regola "2 pad per net"                         ← senza KiCad, testato
-  follow.py       pista guida e corsie parallele                 ← senza KiCad, testato
-  router.py       griglia + A* a 8 direzioni + controllo clearance ← senza KiCad, testato
+  entrypoint.py   flow and dialogs (wx)
+  board_io.py     KiCad side: selection, guide track, rules, obstacles, apply/remove
+  selection.py    "2 pads per net" rule                       ← no KiCad needed, tested
+  follow.py       guide track and parallel lanes              ← no KiCad needed, tested
+  router.py       grid + 8-direction A* + clearance check     ← no KiCad needed, tested
 ```
 
-- **Guida:** l'unica net del gruppo i cui pad sono già collegati. Deve essere una catena di segmenti dritti, su un solo layer, con una sola larghezza.
-- **Corsie:** la guida viene spostata lateralmente della distanza dei pad di ogni net dalla guida, misurata a ciascuno dei due capi. Gli spigoli si calcolano intersecando le rette spostate, quindi i 45° restano 45° e il fascio mantiene la spaziatura dei pad.
-- **Copia esatta:** se il percorso pad → corsia → pad non urta nulla, viene usato così com'è: rette perfette, nessuna griglia.
-- **Deviazione:** se la copia esatta urta un ostacolo, solo quella pista viene instradata con A* a 8 direzioni (solo 0/45/90°). La griglia ha passo `(larghezza + clearance) / 4` ed è allineata all'inizio della guida. Costo di ogni passo = lunghezza + svolte + distanza dalla propria corsia (oltre 1 passo di tolleranza). Le piste vengono posate dall'interno verso l'esterno e diventano ostacoli per le successive. I pesi si trovano in `WEIGHTS` in [`plugin/router.py`](plugin/router.py).
-- **Margine di griglia:** una cella è libera solo se rispetta la clearance più `passo × √2/2`. Questo rende sicuri anche i tratti tra una cella e l'altra.
-- **Ordine:** l'ordine laterale dei pad deve essere lo stesso ai due capi. Altrimenti, su un solo layer, le piste si incrocerebbero e la proposta viene rifiutata.
-- **Regole:** la clearance è il massimo tra le netclass delle net coinvolte. Per ogni ostacolo vale `max(clearance del gruppo, clearance netclass dell'ostacolo)`.
-- **Ostacoli:** pad, fori, piste e archi, via (come passanti), rule area e bordo scheda. Le zone di rame vanno riempite di nuovo dopo l'applicazione.
-- **Controllo finale:** ogni segmento nuovo viene verificato con distanze geometriche esatte. Se uno viola la clearance, la proposta viene scartata.
+- **Guide:** the only net in the group whose pads are already connected. It must be a single chain of straight segments, on one layer, with one width.
+- **Lanes:** the guide is offset sideways. On the first and last segment the offset is the distance of each net's pads from the guide, measured at each end, so tracks leave and enter their pads straight. On guide segments longer than twice the bus width, the bus tightens to `1.5 × (width + clearance)` between tracks, if that geometry works for every track; otherwise the pad pitch is kept everywhere. Corners are the intersections of the offset lines, so 45° stays 45°.
+- **Exact copy:** if the pad → lane → pad path hits nothing, it is used as is: perfectly straight lines, no grid.
+- **Detour:** if the exact copy hits an obstacle, only that track is routed with an 8-direction A* (0/45/90° only). The grid pitch is `(width + clearance) / 4`, aligned to the start of the guide. Cost of each step = length + bends + distance from its own lane (beyond a one-step tolerance). Tracks are laid from the inside of the bus outwards and become obstacles for the next ones. The weights are in `WEIGHTS` in [`plugin/router.py`](plugin/router.py).
+- **Grid margin:** a cell is free only if it meets the clearance plus `pitch × √2/2`. This keeps the segments between cells safe too.
+- **Order:** the side-by-side order of the pads must be the same at both ends. Otherwise, on a single layer, tracks would cross and the proposal is rejected.
+- **Rules:** clearance is the maximum over the netclasses of the nets involved. For each obstacle, `max(group clearance, obstacle netclass clearance)` applies.
+- **Obstacles:** pads, holes, tracks and arcs, vias (treated as through vias), rule areas and board edge. Copper zones must be refilled after applying.
+- **Final check:** every new segment is verified with exact geometric distances. If one violates clearance, the proposal is discarded.
 
-### Limiti noti
+### Known limitations
 
-- Un solo layer, nessuna via, nessuna modifica delle piste esistenti.
-- Piste guida con archi non supportate.
-- La spaziatura del fascio è quella dei pad: niente compressione.
-- Nelle piste che deviano resta un piccolo aggancio tra il centro del pad e la griglia (< 0,1 mm, dentro il rame del pad).
-- I pad a passo fine possono risultare "troppo vicini a un ostacolo per la griglia".
-- Non considera regole personalizzate `.kicad_dru`, clearance specifica rame-bordo, grafiche e testi su rame.
-- In KiCad 10.0.7 l'API restituisce forme di pad spostate per alcuni footprint ruotati. Per quei pad si usa un ingombro conservativo.
-- Il plugin **non sostituisce il DRC** di KiCad.
+- One layer, no vias, existing tracks are never modified.
+- Guide tracks with arcs are not supported.
+- Tightening on long runs uses fixed parameters (`COMPACT_FACTOR`, `COMPACT_MIN_RATIO` in `follow.py`).
+- Tracks that detour keep a tiny link between the pad centre and the grid (< 0.1 mm, inside the pad copper).
+- Fine-pitch pads may end up "too close to an obstacle for the grid".
+- Custom `.kicad_dru` rules, specific copper-to-edge clearance, copper graphics and copper text are not considered.
+- In KiCad 10.0.7 the API returns displaced pad shapes for some rotated footprints. For those pads a conservative outline is used.
+- `kicad-python` 0.8.0 does not send the document in `BeginCommit`/`EndCommit`, which KiCad 10.0.7 requires when more than one editor is open. The plugin adds the field itself.
+- The plugin **does not replace** KiCad's DRC.
 
-### Test simulati (senza KiCad)
+### Simulated tests (no KiCad)
 
 ```bash
 python tests/test_selection.py
 python tests/test_follow.py
 ```
 
-## 📚 Riferimenti
+## 📚 References
 
 - [KiCad IPC API — for add-on developers](https://dev-docs.kicad.org/en/apis-and-binding/ipc-api/for-addon-developers/)
 - [kicad-python (kipy)](https://gitlab.com/kicad/code/kicad-python)
-- [Schema `plugin.json`](https://go.kicad.org/api/schemas/v1)
+- [`plugin.json` schema](https://go.kicad.org/api/schemas/v1)
